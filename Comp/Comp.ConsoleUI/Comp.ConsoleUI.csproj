@@ -5,4 +5,10 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Comp.Compress\Comp.Compress.csproj" />
+    <ProjectReference Include="..\Comp.General\Comp.General.csproj" />
+    <ProjectReference Include="..\Comp.NeuralNetwork\Comp.NeuralNetwork.csproj" />
+  </ItemGroup>
+
 </Project>
