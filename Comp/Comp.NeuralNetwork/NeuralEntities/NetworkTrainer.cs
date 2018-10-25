@@ -17,7 +17,8 @@ namespace Comp.NeuralNetwork.NeuralEntities
                 for (int i = 0; i < trainset.Count; ++i)
                 {
                     //прямой проход
-                    network.Inputs = trainset[i].Item1;
+                    network.SetInputs(trainset[i].Item1);
+                    //network.Inputs = trainset[i].Item1;
                     var outputs = await network.GetOutputs();
                     //вычисление ошибки по итерации
                     double[] errors = new double[trainset[i].Item2.Length];

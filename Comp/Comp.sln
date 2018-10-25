@@ -7,15 +7,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Comp.NeuralNetwork", "Comp.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Comp.ConsoleUI", "Comp.ConsoleUI\Comp.ConsoleUI.csproj", "{435CFCCE-CADA-4D05-811B-7AAF75543DFB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Comp.Compress", "Comp.Compress\Comp.Compress.csproj", "{A9CB8598-57EE-4AD9-8367-12559AE543A2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Comp.Compress", "Comp.Compress\Comp.Compress.csproj", "{A9CB8598-57EE-4AD9-8367-12559AE543A2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Comp.General", "Comp.General\Comp.General.csproj", "{D0C04244-9CDE-415F-AB68-DAA13FA69CC7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Comp.General", "Comp.General\Comp.General.csproj", "{D0C04244-9CDE-415F-AB68-DAA13FA69CC7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UI", "UI", "{09C3A1D4-4D1D-4465-8207-9A08A7B4B4E1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{B93ACDFE-B3EE-44FD-ACCF-69B9FD30D239}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Compression", "Compression", "{24661201-F4FB-451F-B8BA-A62FCF9D36AB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Comp.CompressionNetwork", "Comp.CompressionNetwork\Comp.CompressionNetwork.csproj", "{EB7CC62F-7277-45DB-86D2-6CE0B7DFA423}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{D0C04244-9CDE-415F-AB68-DAA13FA69CC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D0C04244-9CDE-415F-AB68-DAA13FA69CC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D0C04244-9CDE-415F-AB68-DAA13FA69CC7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB7CC62F-7277-45DB-86D2-6CE0B7DFA423}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB7CC62F-7277-45DB-86D2-6CE0B7DFA423}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB7CC62F-7277-45DB-86D2-6CE0B7DFA423}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB7CC62F-7277-45DB-86D2-6CE0B7DFA423}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -48,6 +54,7 @@ Global
 		{435CFCCE-CADA-4D05-811B-7AAF75543DFB} = {09C3A1D4-4D1D-4465-8207-9A08A7B4B4E1}
 		{A9CB8598-57EE-4AD9-8367-12559AE543A2} = {24661201-F4FB-451F-B8BA-A62FCF9D36AB}
 		{D0C04244-9CDE-415F-AB68-DAA13FA69CC7} = {B93ACDFE-B3EE-44FD-ACCF-69B9FD30D239}
+		{EB7CC62F-7277-45DB-86D2-6CE0B7DFA423} = {24661201-F4FB-451F-B8BA-A62FCF9D36AB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0024537A-EE9F-4120-BB3A-668C6A4E88FB}

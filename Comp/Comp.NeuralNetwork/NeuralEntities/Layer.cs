@@ -8,14 +8,15 @@ namespace Comp.NeuralNetwork.NeuralEntities
         #region Fields
 
         protected const double LEARNING_GRATE = 0.1d;
+
+        private readonly Neuron[] _neurons;
+        private readonly ILayerMemory _memory;
         protected readonly int _currentNeuronCount;
         protected readonly int _previousNeuronCount;
-        private readonly Neuron[] _neurons;
-        private readonly IMemory _memory;
 
         #endregion
 
-        public Layer(int neuronCount, int previousNeuronCount, IMemory memory)
+        public Layer(int neuronCount, int previousNeuronCount, ILayerMemory memory)
         {
             _currentNeuronCount = neuronCount;
             _previousNeuronCount = previousNeuronCount;
@@ -29,6 +30,8 @@ namespace Comp.NeuralNetwork.NeuralEntities
         {
             get => _neurons;
         }
+
+        public int NeuronsCount => this.Neurons != null ? this.Neurons.Length : default(int);
 
         public void SetInputs(double[] inputs)
         {
@@ -65,8 +68,8 @@ namespace Comp.NeuralNetwork.NeuralEntities
                 for (int neuronIndex = 0; neuronIndex < _currentNeuronCount; neuronIndex++)
                 {
                     var currentNeuron = _neurons[neuronIndex];
-                    double gradientor = currentNeuron.Gradientor(errors[neuronIndex], gradients[neuronIndex]);
-                    gradientSum += currentNeuron.Weights[previousNeuronIndex] * gradientor; // через ошибку и производную
+                    var gradientor = currentNeuron.Gradientor(errors[neuronIndex], gradients[neuronIndex]);
+                    gradientSum += currentNeuron.Weights[previousNeuronIndex] * gradientor;
                     currentNeuron.Weights[previousNeuronIndex] += currentNeuron.Inputs[previousNeuronIndex] * LEARNING_GRATE * gradientor; // коррекция весов         
                 }
                 gradientSums[previousNeuronIndex] = gradientSum;

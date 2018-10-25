@@ -22,23 +22,19 @@ namespace Comp.ConsoleUI
         {
             var trainset = new List<Tuple<double[], double[]>>
             {
-                Tuple.Create(new double[]{ 1, 0, 1, 0, 1, 0, 1, 0 }, new double[]{ 1, 0 }),
-                Tuple.Create(new double[]{ 0, 1, 0, 1, 0, 1, 0, 1 }, new double[]{ 0, 1 }),
-                Tuple.Create(new double[]{ 0, 0, 0, 0, 0, 0, 0, 0 }, new double[]{ 0, 0 }),
-                Tuple.Create(new double[]{ 1, 1, 1, 1, 1, 1, 1, 1 }, new double[]{ 1, 1 }),
-                Tuple.Create(new double[]{ 1, 0, 1, 0, 1, 1, 1, 0 }, new double[]{ 1, 0 }),
+                Tuple.Create(new double[]{ 'a', 'a', 'a', 'n', 'n', 'a', 'a', 'a' }, new double[]{ 1, 0, 0, 1, 0, 1, 0, 0 }),
+                Tuple.Create(new double[]{ 'q', 'a', 'q', 'a', 'q', 'a', 'b', 'q' }, new double[]{ 1, 0, 1, 0, 1, 0, 1, 1 }),
             };
 
-            var hiddenMemory = new XmlMemory(".\\weights\\hidden.xml");
-            var outputMemory = new XmlMemory(".\\weights\\output.xml");
+            var hiddenMemory = new XmlLayerMemory(".\\weights\\hidden.xml");
+            var outputMemory = new XmlLayerMemory(".\\weights\\output.xml");
 
-            var memories = new Queue<IMemory>();
+            var memories = new Queue<ILayerMemory>();
 
             memories.Enqueue(hiddenMemory);
             memories.Enqueue(outputMemory);
 
-            var emptyInputs = new double[8];
-            var neuralNetwork = new NeuralEntities.NeuralNetwork(memories, emptyInputs, 2, 2);
+            var neuralNetwork = new NeuralEntities.NeuralNetwork(memories, 8, 2, 8);
             var trainer = new NeuralEntities.NetworkTrainer();
 
             await trainer.Train(neuralNetwork, trainset);

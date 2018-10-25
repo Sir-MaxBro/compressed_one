@@ -3,12 +3,12 @@ using System.Xml;
 
 namespace Comp.NeuralNetwork.Memories.Implementations
 {
-    public class XmlMemory : IMemory
+    public class XmlLayerMemory : ILayerMemory
     {
         private readonly string _path;
         private XmlDocument _xmlDocument;
 
-        public XmlMemory(string path)
+        public XmlLayerMemory(string path)
         {
             _path = path;
             this.Initialize(_path);
@@ -50,7 +50,6 @@ namespace Comp.NeuralNetwork.Memories.Implementations
             }
             _xmlDocument.Save(_path);
         }
-
 
         protected XmlElement MemoryDocumentElement
         {

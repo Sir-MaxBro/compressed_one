@@ -1,5 +1,4 @@
 ﻿using Comp.NeuralNetwork.Memories;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -12,44 +11,44 @@ namespace Comp.NeuralNetwork.NeuralEntities
 
         private readonly int _layerCount;
         private readonly int _outputCount;
-        private readonly int _inputCount;
-        private readonly Queue<IMemory> _memories;
+        private readonly Queue<ILayerMemory> _memories;
+        private readonly object lockObject = new object();
 
         private double[] _inputs;
         private LinkedList<Layer> _layers;
 
-        public NeuralNetwork(Queue<IMemory> memories, double[] inputs)
-            : this(memories, inputs, DEFAULT_LAYER_COUNT, DEFAULT_OUTPUT_COUNT) { }
+        public NeuralNetwork(Queue<ILayerMemory> memories, int inputCount)
+            : this(memories, inputCount, DEFAULT_LAYER_COUNT, DEFAULT_OUTPUT_COUNT) { }
 
-        public NeuralNetwork(Queue<IMemory> memories, double[] inputs, int layerCount)
-            : this(memories, inputs, layerCount, DEFAULT_OUTPUT_COUNT) { }
+        public NeuralNetwork(Queue<ILayerMemory> memories, int inputCount, int layerCount)
+            : this(memories, inputCount, layerCount, DEFAULT_OUTPUT_COUNT) { }
 
-        public NeuralNetwork(Queue<IMemory> memories, double[] inputs, int layerCount, int outputCount)
+        public NeuralNetwork(Queue<ILayerMemory> memories, int inputCount, int layerCount, int outputCount)
         {
             if (memories.Count != layerCount)
             {
-                throw new ArgumentException();
+                layerCount = memories.Count;
             }
 
-            _inputs = inputs;
-            _inputCount = inputs.Length;
+            //this.SetInputs(inputs);
+            _memories = memories;
             _layerCount = layerCount;
             _outputCount = outputCount;
-            _memories = memories;
 
-            this.InitializeNetwork();
+            this.InitializeNetwork(inputCount);
         }
 
         public double[] Inputs
         {
             get { return _inputs; }
-            internal set
+        }
+
+        public void SetInputs(double[] inputs)
+        {
+            _inputs = inputs;
+            if (_layers != null)
             {
-                if (_inputs != null && _layers != null)
-                {
-                    _layers.First.Value.SetInputs(value);
-                    _inputs = value;
-                }
+                _layers.First.Value.SetInputs(_inputs);
             }
         }
 
@@ -69,6 +68,16 @@ namespace Comp.NeuralNetwork.NeuralEntities
             }
 
             return outputs;
+        }
+
+        /// <summary>
+        /// Get neuron count for the next layer
+        /// </summary>
+        /// <param name="neuronCount">The count of neurons.</param>
+        /// <returns>Return count of neurons for the next layer.</returns>
+        public virtual int GetIncrementedNeuronCount(int neuronCount)
+        {
+            return neuronCount * 2;
         }
 
         private async Task<Neuron[]> StartNetwork()
@@ -96,45 +105,48 @@ namespace Comp.NeuralNetwork.NeuralEntities
                 });
         }
 
-        private void InitializeNetwork()
+        private void InitializeNetwork(int inputCount)
         {
-            var layers = new LinkedList<Layer>();
+            var layersStorage = new LinkedList<Layer>();
+            var currentLayer = this.SetInputLayer(inputCount, layersStorage);
 
-            var inputLayer = this.GetInputLayer();
-            var currentLayer = layers.AddFirst(inputLayer);
-
-            var previousNeuronCount = this.GetIncrementedNeuronCount(_inputCount);
+            var previousNeuronCount = currentLayer.Value.NeuronsCount;
             for (int layerIndex = 1; layerIndex < _layerCount - 1; layerIndex++)
             {
+                var memory = this.GetLayerMemory();
                 var neuronCount = this.GetIncrementedNeuronCount(previousNeuronCount);
-                var memory = _memories.Dequeue();
-
-                var layer = new Layer(neuronCount, previousNeuronCount, memory);
+                var nextLayer = new Layer(neuronCount, previousNeuronCount, memory);
                 previousNeuronCount = neuronCount;
-                currentLayer = layers.AddAfter(currentLayer, layer);
+                currentLayer = layersStorage.AddAfter(currentLayer, nextLayer);
             }
 
-            var outputMemory = _memories.Dequeue();
-            var outputLayer = new Layer(_outputCount, previousNeuronCount, outputMemory);
+            this.SetOutputLayer(_outputCount, layersStorage);
 
-            layers.AddLast(outputLayer);
-            _layers = layers;
+            lock (lockObject)
+            {
+                _layers = layersStorage;
+            }
         }
 
-        private Layer GetInputLayer()
+        private LinkedListNode<Layer> SetInputLayer(int inputCount, LinkedList<Layer> layersStorage)
         {
-            var neuronCount = this.GetIncrementedNeuronCount(_inputCount);
-            var inputMemory = _memories.Dequeue();
-
-            var inputLayer = new Layer(neuronCount, _inputCount, inputMemory);
-            inputLayer.SetInputs(_inputs);
-
-            return inputLayer;
+            var inputMemory = this.GetLayerMemory();
+            var neuronCount = this.GetIncrementedNeuronCount(inputCount);
+            var inputLayer = new Layer(neuronCount, inputCount, inputMemory);
+            return layersStorage?.AddFirst(inputLayer);
         }
 
-        private int GetIncrementedNeuronCount(int neuronCount)
+        private LinkedListNode<Layer> SetOutputLayer(int outputCount, LinkedList<Layer> layersStorage)
         {
-            return neuronCount * 2;
+            var outputMemory = this.GetLayerMemory();
+            var previousNeuronCount = layersStorage.Last.Value.NeuronsCount;
+            var outputLayer = new Layer(outputCount, previousNeuronCount, outputMemory);
+            return layersStorage?.AddLast(outputLayer);
+        }
+
+        private ILayerMemory GetLayerMemory()
+        {
+            return _memories?.Dequeue();
         }
     }
 }

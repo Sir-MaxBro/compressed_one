@@ -1,6 +1,6 @@
 ﻿namespace Comp.NeuralNetwork.Memories
 {
-    public interface IMemory
+    public interface ILayerMemory
     {
         /// <summary>
         /// Save the neurons weight
