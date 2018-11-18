@@ -48,7 +48,7 @@ namespace Comp.NeuralNetwork.NeuralEntities
 
         public void SaveWeights()
         {
-            double[,] resultWeights = new double[_currentNeuronCount, _previousNeuronCount];
+            var resultWeights = new double[_currentNeuronCount, _previousNeuronCount];
             for (int i = 0; i < _currentNeuronCount; ++i)
             {
                 for (int j = 0; j < _previousNeuronCount; ++j)
@@ -61,7 +61,7 @@ namespace Comp.NeuralNetwork.NeuralEntities
 
         public double[] BackwardPass(double[] errors, double[] gradients)
         {
-            double[] gradientSums = new double[_previousNeuronCount];
+            var gradientSums = new double[_previousNeuronCount];
             for (int previousNeuronIndex = 0; previousNeuronIndex < _previousNeuronCount; previousNeuronIndex++) // вычисление градиентных сумм выходного слоя
             {
                 double gradientSum = default(double);

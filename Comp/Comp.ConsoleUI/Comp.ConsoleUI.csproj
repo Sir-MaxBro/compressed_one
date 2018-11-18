@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Comp.CompressionNetwork\Comp.CompressionNetwork.csproj" />
     <ProjectReference Include="..\Comp.Compress\Comp.Compress.csproj" />
     <ProjectReference Include="..\Comp.General\Comp.General.csproj" />
     <ProjectReference Include="..\Comp.NeuralNetwork\Comp.NeuralNetwork.csproj" />

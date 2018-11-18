@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Comp.General.Extensions;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Comp.NeuralNetwork.NeuralEntities
@@ -42,12 +44,13 @@ namespace Comp.NeuralNetwork.NeuralEntities
                         gradientSums = currentLayer.Value.BackwardPass(emptyErrors, gradientSums);
                     }
                 }
-                eraError = this.GetEraError(iterationErrors); //вычисление ошибки по эпохе
-                //debugging
-                Console.WriteLine(eraError);
-            } while (eraError > THRESHOLD);
 
-            this.SaveWeights(network);
+                eraError = this.GetEraError(iterationErrors); //вычисление ошибки по эпохе
+                trainset = trainset.Mix().ToList();
+                this.SaveWeights(network);
+                //debugging
+                Console.WriteLine("Era error: {0:F50}", eraError);
+            } while (eraError > THRESHOLD);
         }
 
         private void SaveWeights(NeuralNetwork network)

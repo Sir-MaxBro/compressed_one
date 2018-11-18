@@ -29,8 +29,7 @@ namespace Comp.NeuralNetwork.NeuralEntities
             {
                 layerCount = memories.Count;
             }
-
-            //this.SetInputs(inputs);
+            
             _memories = memories;
             _layerCount = layerCount;
             _outputCount = outputCount;
@@ -52,15 +51,12 @@ namespace Comp.NeuralNetwork.NeuralEntities
             }
         }
 
-        internal LinkedList<Layer> Layers
-        {
-            get => _layers;
-        }
+        internal LinkedList<Layer> Layers => _layers;
 
         public async Task<double[]> GetOutputs()
         {
-            double[] outputs = new double[_outputCount];
-            Neuron[] outputNeurons = await this.StartNetwork();
+            var outputs = new double[_outputCount];
+            var outputNeurons = await this.StartNetwork();
 
             for (int i = 0; i < _outputCount; i++)
             {

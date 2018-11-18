@@ -81,6 +81,7 @@ namespace Comp.NeuralNetwork.NeuralEntities
                 sum += inputs[i] * weights[i];
             }
             return Math.Pow(1 + Math.Exp(-sum), -1);
+            //return (2 * Math.Pow(1 + Math.Exp(-2 * sum), -1)) - 1;
         }
     }
 }

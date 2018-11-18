@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Comp.General.Extensions
@@ -15,6 +16,29 @@ namespace Comp.General.Extensions
                 yield return source.Skip(batchNumber * batchSize).Take(batchSize).ToList();
                 batchNumber++;
             }
+        }
+
+        public static IEnumerable<TResult> Mix<TResult>(this IEnumerable<TResult> source)
+        {
+            var itemsCount = source.Count();
+            var mixedCollection = new TResult[itemsCount];
+            var randomGenerator = new Random(DateTime.Now.Millisecond);
+
+            foreach (var item in source)
+            {
+                bool isSetItem = false;
+                do
+                {
+                    var nextIndex = randomGenerator.Next(0, itemsCount);
+                    if (mixedCollection[nextIndex] == null)
+                    {
+                        mixedCollection[nextIndex] = item;
+                        isSetItem = true;
+                    }
+                } while (!isSetItem);
+            }
+
+            return mixedCollection;
         }
     }
 }

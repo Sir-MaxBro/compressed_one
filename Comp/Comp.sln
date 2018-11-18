@@ -17,7 +17,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{B93ACD
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Compression", "Compression", "{24661201-F4FB-451F-B8BA-A62FCF9D36AB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Comp.CompressionNetwork", "Comp.CompressionNetwork\Comp.CompressionNetwork.csproj", "{EB7CC62F-7277-45DB-86D2-6CE0B7DFA423}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Comp.CompressionNetwork", "Comp.CompressionNetwork\Comp.CompressionNetwork.csproj", "{EB7CC62F-7277-45DB-86D2-6CE0B7DFA423}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
