@@ -1,6 +1,7 @@
 ﻿using Comp.General.Extensions;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -8,7 +9,9 @@ namespace Comp.NeuralNetwork.NeuralEntities
 {
     public class NetworkTrainer
     {
-        protected internal readonly double THRESHOLD = 0.001d; //порог ошибки
+        private const int BatchSize = 128;
+        protected const double THRESHOLD = 0.001d; //порог ошибки
+        private const string EraErrorFileName = @".\eraErrors.txt";
 
         public async Task Train(NeuralNetwork network, IList<Tuple<double[], double[]>> trainset)
         {
@@ -18,38 +21,57 @@ namespace Comp.NeuralNetwork.NeuralEntities
             {
                 for (int i = 0; i < trainset.Count; ++i)
                 {
-                    //прямой проход
-                    network.SetInputs(trainset[i].Item1);
-                    //network.Inputs = trainset[i].Item1;
-                    var outputs = await network.GetOutputs();
-                    //вычисление ошибки по итерации
-                    double[] errors = new double[trainset[i].Item2.Length];
-                    for (int x = 0; x < errors.Length; ++x)
+                    var step = default(int);
+                    foreach (var item in trainset[i].Item1.Batch(BatchSize))
                     {
-                        // расчет ошибки
-                        errors[x] = trainset[i].Item2[x] - outputs[x];
-                    }
-                    iterationErrors[i] = this.GetIterationError(errors);
+                        //прямой проход
+                        network.SetInputs(item.ToArray());
+                        var outputs = await network.GetOutputs();
+                        var expectedOutputs = trainset[i].Item2.Skip(BatchSize * step).Take(BatchSize).ToArray();
+                        if (expectedOutputs.Length < BatchSize)
+                        {
+                            var expectedList = new List<double>(expectedOutputs);
+                            expectedList.AddRange(new double[BatchSize - expectedOutputs.Length]);
+                            expectedOutputs = expectedList.ToArray();
+                        }
 
-                    //обратный проход и коррекция весов
+                        //вычисление ошибки по итерации
+                        double[] errors = new double[expectedOutputs.Length];
+                        for (int x = 0; x < errors.Length; ++x)
+                        {
+                            // расчет ошибки
+                            errors[x] = expectedOutputs[x] - outputs[x];
+                        }
 
-                    var emptyGradients = new double[errors.Length];
-                    var emptyErrors = new double[errors.Length];
-                    var currentLayer = network.Layers.Last;
-                    var gradientSums = currentLayer.Value.BackwardPass(errors, emptyGradients);
-                    while (currentLayer.Previous != null)
-                    {
-                        currentLayer = currentLayer.Previous;
-                        emptyErrors = new double[currentLayer.Value.Neurons.Length];
-                        gradientSums = currentLayer.Value.BackwardPass(emptyErrors, gradientSums);
+                        iterationErrors[i] = this.GetIterationError(errors);
+
+                        //обратный проход и коррекция весов
+
+                        var emptyGradients = new double[errors.Length];
+                        var emptyErrors = new double[errors.Length];
+                        var currentLayer = network.Layers.Last;
+                        var gradientSums = currentLayer.Value.BackwardPass(errors, emptyGradients);
+                        while (currentLayer.Previous != null)
+                        {
+                            currentLayer = currentLayer.Previous;
+                            emptyErrors = new double[currentLayer.Value.Neurons.Length];
+                            gradientSums = currentLayer.Value.BackwardPass(emptyErrors, gradientSums);
+                        }
+
+                        step++;
+
+                        Console.WriteLine("Iteration error: {0:F50}", iterationErrors[i]);
                     }
                 }
 
                 eraError = this.GetEraError(iterationErrors); //вычисление ошибки по эпохе
                 trainset = trainset.Mix().ToList();
                 this.SaveWeights(network);
+                this.SaveEraError(eraError);
+                Console.Clear();
                 //debugging
                 Console.WriteLine("Era error: {0:F50}", eraError);
+                GC.Collect();
             } while (eraError > THRESHOLD);
         }
 
@@ -70,6 +92,7 @@ namespace Comp.NeuralNetwork.NeuralEntities
             {
                 sum += Math.Pow(errors[i], 2);
             }
+
             return 0.5d * sum;
         }
 
@@ -80,7 +103,16 @@ namespace Comp.NeuralNetwork.NeuralEntities
             {
                 sum += iterationsError[i];
             }
+
             return sum / iterationsError.Length;
+        }
+
+        private void SaveEraError(double eraError)
+        {
+            using (var streamWriter = new StreamWriter(EraErrorFileName, true))
+            {
+                streamWriter.WriteLine($"Era error = {eraError}");
+            }
         }
     }
 }

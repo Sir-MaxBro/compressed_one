@@ -13,6 +13,7 @@ namespace Comp.NeuralNetwork.NeuralEntities
         private readonly int _outputCount;
         private readonly Queue<ILayerMemory> _memories;
         private readonly object lockObject = new object();
+        private readonly int _inputCount = default(int);
 
         private double[] _inputs;
         private LinkedList<Layer> _layers;
@@ -29,7 +30,8 @@ namespace Comp.NeuralNetwork.NeuralEntities
             {
                 layerCount = memories.Count;
             }
-            
+
+            _inputCount = inputCount;
             _memories = memories;
             _layerCount = layerCount;
             _outputCount = outputCount;
@@ -44,7 +46,8 @@ namespace Comp.NeuralNetwork.NeuralEntities
 
         public void SetInputs(double[] inputs)
         {
-            _inputs = inputs;
+            var allInputs = this.GetAllInputs(inputs);
+            _inputs = allInputs;
             if (_layers != null)
             {
                 _layers.First.Value.SetInputs(_inputs);
@@ -84,6 +87,7 @@ namespace Comp.NeuralNetwork.NeuralEntities
                 await this.Recognize(currentLayer.Value, currentLayer.Next.Value);
                 currentLayer = currentLayer.Next;
             }
+
             return currentLayer.Value.Neurons;
         }
 
@@ -97,6 +101,7 @@ namespace Comp.NeuralNetwork.NeuralEntities
                     {
                         nextInputs[i] = neurons[i].GetOutput();
                     }
+
                     nextLayer.SetInputs(nextInputs);
                 });
         }
@@ -143,6 +148,18 @@ namespace Comp.NeuralNetwork.NeuralEntities
         private ILayerMemory GetLayerMemory()
         {
             return _memories?.Dequeue();
+        }
+
+        private double[] GetAllInputs(double[] inputs)
+        {
+            var missingInputs = new List<double>(inputs);
+
+            if (inputs.Length < _inputCount)
+            {
+                missingInputs.AddRange(new double[_inputCount - inputs.Length]);
+            }
+
+            return missingInputs.ToArray();
         }
     }
 }

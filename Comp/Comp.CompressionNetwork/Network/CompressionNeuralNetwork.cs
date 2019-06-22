@@ -49,7 +49,7 @@ namespace Comp.CompressionNetwork.Network
             var result = new StringBuilder(source);
             foreach (var item in compressMap)
             {
-                result.Replace(item.Key, item.Value.ToString());
+                result.Replace(item.Key, item.Value.ToString() + "#");
             }
 
             return new CompressResult
@@ -64,7 +64,7 @@ namespace Comp.CompressionNetwork.Network
             var code = 1;
             var compressMap = new Dictionary<string, int>();
 
-            foreach (var item in mainFrequencyMap.OrderByDescending(f => f.Value).ToList())
+            foreach (var item in mainFrequencyMap.Where(f => !string.IsNullOrEmpty(f.Key)).OrderByDescending(f => f.Value).ToList())
             {
                 compressMap.Add(item.Key, code);
                 code++;
@@ -134,22 +134,7 @@ namespace Comp.CompressionNetwork.Network
 
         private List<int> GetFrequencies(double[] sourceFrequencies)
         {
-            var currentFrequency = default(int);
-            var resultFrequencies = new List<int>();
-
-            for (int i = 0; i < sourceFrequencies.Length; i++)
-            {
-                var frequency = Math.Round(sourceFrequencies[i]);
-                if (frequency == 1 && currentFrequency != default(int))
-                {
-                    resultFrequencies.Add(currentFrequency);
-                    currentFrequency = default(int);
-                }
-
-                currentFrequency++;
-            }
-
-            return resultFrequencies;
+            return sourceFrequencies.Select(f => (int)Math.Round(f * CHARACTERS_COUNT)).ToList();
         }
     }
 }

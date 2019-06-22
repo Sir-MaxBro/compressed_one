@@ -56,6 +56,7 @@ namespace Comp.NeuralNetwork.NeuralEntities
                     resultWeights[i, j] = _neurons[i].Weights[j];
                 }
             }
+
             _memory.SaveWeight(resultWeights);
         }
 
@@ -88,6 +89,7 @@ namespace Comp.NeuralNetwork.NeuralEntities
                 {
                     weights[j] = weightsSource[i, j];
                 }
+
                 // initialize neurouns
                 _neurons[i] = new Neuron(weights);
             }

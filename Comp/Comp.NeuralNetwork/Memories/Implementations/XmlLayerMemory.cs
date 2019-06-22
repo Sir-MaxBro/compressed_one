@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Xml;
 
 namespace Comp.NeuralNetwork.Memories.Implementations
@@ -16,6 +17,7 @@ namespace Comp.NeuralNetwork.Memories.Implementations
 
         public double[,] LoadWeight(int neuronCount, int inputNeuronCount)
         {
+            Console.WriteLine("Load weights...");
             var weights = new double[neuronCount, inputNeuronCount];
             for (int neuronIndex = 0; neuronIndex < neuronCount; neuronIndex++)
             {
@@ -24,15 +26,18 @@ namespace Comp.NeuralNetwork.Memories.Implementations
                     // initialize weight
                     var neuronWeight = this.MemoryDocumentElement.ChildNodes.Item(inputNeuronIndex + weights.GetLength(1) * neuronIndex).InnerText.Replace(',', '.');
                     weights[neuronIndex, inputNeuronIndex] = double.Parse(neuronWeight, System.Globalization.CultureInfo.InvariantCulture);
-                    System.Console.WriteLine("Initialize weights [{0},{1}] = {2} from {3}", neuronIndex, inputNeuronIndex, neuronWeight, _path);
                 }
             }
+
+            Console.WriteLine("Load weights completed...");
 
             return weights;
         }
 
         public void SaveWeight(double[,] weight)
         {
+            Console.WriteLine("Save weights...");
+
             var neuronCount = weight.GetLength(0);
             var inputNeuronCount = weight.GetLength(1);
 
@@ -48,6 +53,8 @@ namespace Comp.NeuralNetwork.Memories.Implementations
             }
 
             _xmlDocument.Save(_path);
+
+            Console.WriteLine("Save weights completed...");
         }
 
         protected XmlElement MemoryDocumentElement
@@ -59,14 +66,13 @@ namespace Comp.NeuralNetwork.Memories.Implementations
         {
             if (!File.Exists(path))
             {
-                File.Create(path);
+                this.CreateFile(path);
 
                 var xmlDeclaration = _xmlDocument.CreateXmlDeclaration("1.0", "UTF-8", null);
                 _xmlDocument.InsertBefore(xmlDeclaration, _xmlDocument.DocumentElement);
 
                 var rootElement = _xmlDocument.CreateElement(string.Empty, "weights", string.Empty);
                 _xmlDocument.AppendChild(rootElement);
-
                 _xmlDocument.Save(path);
             }
 
@@ -80,12 +86,17 @@ namespace Comp.NeuralNetwork.Memories.Implementations
 
             if (childNodesCount != fullNeuronsCount)
             {
-                for (int i = childNodesCount; i < fullNeuronsCount - childNodesCount; i++)
+                for (int i = 0; i < fullNeuronsCount - childNodesCount; i++)
                 {
                     var newWeightElement = _xmlDocument.CreateElement("weight");
                     this.MemoryDocumentElement.AppendChild(newWeightElement);
                 }
             }
+        }
+
+        private void CreateFile(string path)
+        {
+            using (var fileStream = File.Create(path)) { }
         }
     }
 }
